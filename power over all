@@ -1,0 +1,183 @@
+import random
+#card definition
+#       2,3,4,5,6,7,8,9,10,j,q,k,a
+#players will always play the lowest value card possible while also trying to not lose
+player_win = 0
+devil_win = 0
+total_rounds = 0
+loop_amount = 10000
+for i in range (loop_amount):
+    print(i)
+    cards = [2,2,2,2,2,2,2,2,2,2,2,2,2]
+
+    players = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+    devil = [-1,-1,-1,-1,-1]
+
+
+    #dealing cards
+    choice = random.randint(0,12)
+    for i in range(len(players)):
+        done = False
+        while done == False:
+            choice = random.randint(0,12)
+            if cards[choice] > 0:
+                cards[choice] -=1
+                players[i] = choice
+                done = True
+            else:
+                None
+                
+    for i in range(len(devil)):
+        done = False
+        while done == False:
+            choice = random.randint(0,12)
+            if cards[choice] > 0:
+                cards[choice] -=1
+                devil[i] = choice
+                done = True
+            else:
+                None
+
+    players.sort()
+    devil.sort()
+    print(players)
+    print(devil)
+
+    #playing cards
+    #devil and players always player lowest possible cards that isn't a two
+    played_card = -1
+    rounds = 1
+
+    game = True
+    while game == True:
+        played = False
+
+        ace = False
+        ace_position = 0
+        two = False
+        two_position = 0
+
+        played_players = 0
+        #devil attempting to play
+        
+        #ensures the devil doesn't play a two on a two
+        if rounds == 1:
+            for i in range(len(devil)):
+                if devil[i] != 0:
+                    played_card = devil[i]
+                    devil[i] = -1
+                    played = True
+                    break
+                           
+
+        if rounds != 1:
+            for i in range(len(devil)):
+                if played_card != 12:
+                    if devil[i]>= played_card:
+                        played_card = devil[i]
+                        devil[i] = -1
+                        played = True
+                        break
+                    else:
+                        None
+                if played_card == 12:
+                    if devil[i] == 0:
+                        two = True
+                        two_position = i
+                        played = True
+                    if devil[i] == 12:
+                        ace = True
+                        ace_position = i
+                        played = True
+
+        #only occurs if the card the devil has to play against is an Ace
+        if two == True:
+            played_card = devil[two_position]
+            devil[two_position] = -1
+        if (ace == True) and (two == False):
+            played_card = devil[ace_position]
+            devil[ace_position] = -1
+
+
+        #checking to see if the devil lost or won
+        if played == False:
+            print("the players won on round", rounds)
+            print(players)
+            print(devil)
+            print("\n")
+            player_win+=1
+            total_rounds+= rounds
+            break
+        
+        for i in range(len(devil)):
+            end = True
+            if devil[i] != -1:
+                end = False
+                
+        if end == True:
+            devil_win +=1
+            print("the devil won on round", rounds)
+            print(players)
+            print(devil)
+            print("\n")
+            total_rounds+= rounds
+            break
+                
+
+
+
+
+            
+        played_players = 0
+        lose_players = False
+        
+        #players playing
+        for i in range (3):
+            played_players = 0
+            for i in range(len(players)):
+                if played_card != 12:
+                    if players[i]>= played_card:
+                        played_card = players[i]
+                        players[i] = -1
+                        played_players =1
+                    else:
+                        None
+                if played_card == 12:
+                    if players[i] == 0:
+                        played_card = players[i]
+                        players[i] = -1
+                        played_players =1
+                        
+                    if players[i] == 12:
+                        played_card = players[i]
+                        players[i] = -1
+                        played_players=1
+                        
+                if played_players == 1:
+                    break
+            #checking to see if the players lost    
+            if played_players !=1:
+                print("the devil won on round", rounds)
+                print(players)
+                print(devil)
+                print("\n")
+                devil_win+=1
+                total_rounds= total_rounds + rounds
+                lose_players = True
+                break
+                
+
+
+
+        if lose_players == True:
+            break
+        #if we get to this point in the code, the players survived the round
+        rounds+=1
+            
+
+print("devil wins")
+print(devil_win)
+print("\n Player wins")
+print(player_win)
+print(total_rounds)
+print(total_rounds/loop_amount)
